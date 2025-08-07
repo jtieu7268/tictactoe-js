@@ -21,7 +21,7 @@ const gameController = (function GameController(
         for (let i = 0; i < DIM; i++) {
             board[i] = [];
             for (let j = 0; j < DIM; j++) {
-                board[i].push('X');
+                board[i].push('-');
             }
         }
         
@@ -41,9 +41,26 @@ const gameController = (function GameController(
         return { getBoard, placeMove, printBoard };
     })();
 
-    const playerOne = Player(1, playerOneName);
-    const playerTwo = Player(2, playerTwoName);
+    const players = [Player(1, playerOneName), Player(2, playerTwoName)];
 
-    board.printBoard();
-    console.log(playerOne.getName());
+    let curPlayer = players[0];
+    const getCurPlayer = () => curPlayer;
+
+    const switchPlayer = () => curPlayer = getCurPlayer() === players[0] ? players[1] : players[0];
+
+    const printNewRound = () => {
+        board.printBoard();
+        console.log(`${getCurPlayer().getName()}'s turn`);
+    }
+
+    const playRound = (row, col) => {
+        board.placeMove(row, col, getCurPlayer());
+        switchPlayer();
+    }
+
+    printNewRound();
+    playRound(1,1);
+    printNewRound();
+
+    return { getCurPlayer }
 })();
