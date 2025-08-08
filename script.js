@@ -16,36 +16,40 @@ const displayController = (function DisplayController() {
                 boardElem.appendChild(placeholder);
             }
         }
-    }
-
+    };
     initializeDisplay();
 
-    const startBtn = document.querySelector(".start");
-    const namesDialog = document.querySelector("dialog");
-    const formElem = document.querySelector("form");
-    formElem.querySelector("#p1name").value = p1Name;
-    formElem.querySelector("#p2name").value = p2Name;
-    startBtn.addEventListener('click', () => {
-        namesDialog.showModal();
-    })
-    const submitBtn = namesDialog.querySelector("#submit");
-    submitBtn.addEventListener('click', (event) => {
-        if (!formElem.checkValidity()) {
-            formElem.reportValidity();
-        } else {
-            event.preventDefault();
-            p1Name = formElem.querySelector("#p1name").value;
-            p2Name = formElem.querySelector("#p2name").value;
-            namesDialog.close(
-                formElem.querySelector("#p1name").value, 
-                formElem.querySelector("#p2name").value
-            );
-        }
-    })
+    const setUpStart = () => {
+        const startBtn = document.querySelector(".start");
+        const namesDialog = document.querySelector("dialog");
+        const formElem = document.querySelector("form");
+        formElem.querySelector("#p1name").value = p1Name;
+        formElem.querySelector("#p2name").value = p2Name;
+        startBtn.addEventListener('click', () => {
+            namesDialog.showModal();
+        })
+        const submitBtn = namesDialog.querySelector("#submit");
+        submitBtn.addEventListener('click', (event) => {
+            if (!formElem.checkValidity()) {
+                formElem.reportValidity();
+            } else {
+                event.preventDefault();
+                p1Name = formElem.querySelector("#p1name").value;
+                p2Name = formElem.querySelector("#p2name").value;
+                namesDialog.close(
+                    formElem.querySelector("#p1name").value, 
+                    formElem.querySelector("#p2name").value
+                );
+            }
+        });
+        namesDialog.addEventListener('close', () => {
+            startBtn.textContent = "RESTART";
+            playGame();
+        });
+    };
+    setUpStart();
 
-    namesDialog.addEventListener('close', () => {
-        startBtn.textContent = "RESTART";
-
+    const playGame = () => {
         const gameController = (function GameController(
             playerOneName = p1Name, 
             playerTwoName = p2Name,
@@ -105,11 +109,6 @@ const displayController = (function DisplayController() {
 
             const switchPlayer = () => curPlayer = getCurPlayer() === players[0] ? players[1] : players[0];
 
-            const printNewRound = () => {
-                board.printBoard();
-                console.log(`${getCurPlayer().getName()}'s turn`);
-            }
-
             const playRound = (row, col) => {
                 let gameState = getGameState();
                 if (gameState.state === "CONTINUE") {
@@ -118,7 +117,6 @@ const displayController = (function DisplayController() {
                         gameState = getGameState();
                         if (gameState.state === "CONTINUE") {
                             switchPlayer();
-                            printNewRound()
                         }
                         return gameState;
                     }
@@ -179,16 +177,14 @@ const displayController = (function DisplayController() {
                 return { state: "CONTINUE"};
             }
 
-            printNewRound();
-
             return { getCurPlayer, playRound, getBoard: board.getBoard }
         })(p1Name, p2Name);
-        
+
         const boardElem = document.querySelector(".board");
         const turnElem = document.querySelector(".turn");
         const messageElem = document.querySelector(".message");
 
-        const updateDisplay = (gameState) => {
+        const updateGameDisplay = (gameState) => {
             boardElem.textContent = "";
             messageElem.textContent = "";
 
@@ -224,10 +220,10 @@ const displayController = (function DisplayController() {
             selectedCol = event.target.dataset.col;
 
             let gameState = gameController.playRound(selectedRow, selectedCol);
-            updateDisplay(gameState);
+            updateGameDisplay(gameState);
         })
 
-        updateDisplay();
-    })
+        updateGameDisplay();
+    }
 
 })();
