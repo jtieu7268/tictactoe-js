@@ -75,7 +75,6 @@ const displayController = (function DisplayController() {
                     printNewRound()
                 } else {
                     board.printBoard();
-                    console.log(getGameState());
                     return;
                 }
             }
@@ -86,41 +85,41 @@ const displayController = (function DisplayController() {
 
         const getGameState = () => {
             // check rows
-            if (board.getCell(0,0) === board.getCell(0,1) && 
-                board.getCell(0,1) === board.getCell(0,2) &&
+            if (board.getCell(0,0).getSymbol() === board.getCell(0,1).getSymbol() && 
+                board.getCell(0,1).getSymbol() === board.getCell(0,2).getSymbol() &&
                 !board.getCell(0,0).isEmpty()) 
                 return { state: "WIN", winner: board.getCell(0,0)};
-            if (board.getCell(1,0) === board.getCell(1,1) && 
-                board.getCell(1,1) === board.getCell(1,2) &&
+            if (board.getCell(1,0).getSymbol() === board.getCell(1,1).getSymbol() && 
+                board.getCell(1,1).getSymbol() === board.getCell(1,2).getSymbol() &&
                 !board.getCell(1,0).isEmpty()) 
                 return { state: "WIN", winner: board.getCell(0,1)};
-            if (board.getCell(2,0) === board.getCell(2,1) && 
-                board.getCell(2,1) === board.getCell(2,2) &&
+            if (board.getCell(2,0).getSymbol() === board.getCell(2,1).getSymbol() && 
+                board.getCell(2,1).getSymbol() === board.getCell(2,2).getSymbol() &&
                 !board.getCell(2,0).isEmpty()) 
                 return { state: "WIN", winner: board.getCell(0,2)};
 
 
             // check cols
-            if (board.getCell(0,0) === board.getCell(1,0) && 
-                board.getCell(1,0) === board.getCell(2,0) &&
+            if (board.getCell(0,0).getSymbol() === board.getCell(1,0).getSymbol() && 
+                board.getCell(1,0).getSymbol() === board.getCell(2,0).getSymbol() &&
                 !board.getCell(0,0).isEmpty()) 
                 return { state: "WIN", winner: board.getCell(0,0)};
-            if (board.getCell(0,1) === board.getCell(1,1) && 
-                board.getCell(1,1) === board.getCell(2,1) &&
+            if (board.getCell(0,1).getSymbol() === board.getCell(1,1).getSymbol() && 
+                board.getCell(1,1).getSymbol() === board.getCell(2,1).getSymbol() &&
                 !board.getCell(0,1).isEmpty()) 
                 return { state: "WIN", winner: board.getCell(0,1)};
-            if (board.getCell(0,2) === board.getCell(1,2) && 
-                board.getCell(1,2) === board.getCell(2,2) &&
+            if (board.getCell(0,2).getSymbol() === board.getCell(1,2).getSymbol() && 
+                board.getCell(1,2).getSymbol() === board.getCell(2,2).getSymbol() &&
                 !board.getCell(0,2).isEmpty()) 
                 return { state: "WIN", winner: board.getCell(0,2)};
 
             // check diagonals
-            if (board.getCell(0,0) === board.getCell(1,1) && 
-                board.getCell(1,1) === board.getCell(2,2) &&
+            if (board.getCell(0,0).getSymbol() === board.getCell(1,1).getSymbol() && 
+                board.getCell(1,1).getSymbol() === board.getCell(2,2).getSymbol() &&
                 !board.getCell(0,0).isEmpty()) 
                 return { state: "WIN", winner: board.getCell(0,0) };
-            if (board.getCell(2,0) === board.getCell(1,1) && 
-                board.getCell(1,1) === board.getCell(0,2) &&
+            if (board.getCell(2,0).getSymbol() === board.getCell(1,1).getSymbol() && 
+                board.getCell(1,1).getSymbol() === board.getCell(0,2).getSymbol() &&
                 !board.getCell(2,0).isEmpty()) 
                 return { state: "WIN", winner: board.getCell(2,0) };
 
