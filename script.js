@@ -33,7 +33,8 @@ const displayController = (function DisplayController() {
                 const mark = (player) => owner = player;
                 const isEmpty = () => owner === '-';
                 const getSymbol = () => isEmpty() ? owner : owner.getSymbol();
-                return { mark, getSymbol, isEmpty };
+                const getPlayer = () => owner;
+                return { mark, getSymbol, isEmpty, getPlayer };
             }
         
             return { getCell, getBoard, placeMark, printBoard };
@@ -64,23 +65,22 @@ const displayController = (function DisplayController() {
         }
 
         const playRound = (row, col) => {
-            if (getGameState().state !== "CONTINUE") {
-                console.log("GAME OVER");
-                return;
-            }
-            if (board.getCell(row, col).isEmpty()) {
-                board.placeMark(row, col, getCurPlayer());
-                if (getGameState().state === "CONTINUE" ) {
-                    switchPlayer();
-                    printNewRound()
-                } else {
-                    board.printBoard();
-                    return;
+            let gameState = getGameState();
+            if (gameState.state === "CONTINUE") {
+                if (board.getCell(row, col).isEmpty()) {
+                    board.placeMark(row, col, getCurPlayer());
+                    gameState = getGameState();
+                    if (gameState.state === "CONTINUE") {
+                        switchPlayer();
+                        printNewRound()
+                    }
+                    return gameState;
+                }
+                else {
+                    return { state: "REDO" };
                 }
             }
-            else {
-                console.log("That spot is taken, try again.");
-            }
+            return gameState;
         }
 
         const getGameState = () => {
@@ -88,40 +88,40 @@ const displayController = (function DisplayController() {
             if (board.getCell(0,0).getSymbol() === board.getCell(0,1).getSymbol() && 
                 board.getCell(0,1).getSymbol() === board.getCell(0,2).getSymbol() &&
                 !board.getCell(0,0).isEmpty()) 
-                return { state: "WIN", winner: board.getCell(0,0)};
+                return { state: "WIN", winner: board.getCell(0,0).getPlayer() };
             if (board.getCell(1,0).getSymbol() === board.getCell(1,1).getSymbol() && 
                 board.getCell(1,1).getSymbol() === board.getCell(1,2).getSymbol() &&
                 !board.getCell(1,0).isEmpty()) 
-                return { state: "WIN", winner: board.getCell(0,1)};
+                return { state: "WIN", winner: board.getCell(0,1).getPlayer() };
             if (board.getCell(2,0).getSymbol() === board.getCell(2,1).getSymbol() && 
                 board.getCell(2,1).getSymbol() === board.getCell(2,2).getSymbol() &&
                 !board.getCell(2,0).isEmpty()) 
-                return { state: "WIN", winner: board.getCell(0,2)};
+                return { state: "WIN", winner: board.getCell(2,0).getPlayer() };
 
 
             // check cols
             if (board.getCell(0,0).getSymbol() === board.getCell(1,0).getSymbol() && 
                 board.getCell(1,0).getSymbol() === board.getCell(2,0).getSymbol() &&
                 !board.getCell(0,0).isEmpty()) 
-                return { state: "WIN", winner: board.getCell(0,0)};
+                return { state: "WIN", winner: board.getCell(0,0).getPlayer() };
             if (board.getCell(0,1).getSymbol() === board.getCell(1,1).getSymbol() && 
                 board.getCell(1,1).getSymbol() === board.getCell(2,1).getSymbol() &&
                 !board.getCell(0,1).isEmpty()) 
-                return { state: "WIN", winner: board.getCell(0,1)};
+                return { state: "WIN", winner: board.getCell(0,1).getPlayer() };
             if (board.getCell(0,2).getSymbol() === board.getCell(1,2).getSymbol() && 
                 board.getCell(1,2).getSymbol() === board.getCell(2,2).getSymbol() &&
                 !board.getCell(0,2).isEmpty()) 
-                return { state: "WIN", winner: board.getCell(0,2)};
+                return { state: "WIN", winner: board.getCell(0,2).getPlayer() };
 
             // check diagonals
             if (board.getCell(0,0).getSymbol() === board.getCell(1,1).getSymbol() && 
                 board.getCell(1,1).getSymbol() === board.getCell(2,2).getSymbol() &&
                 !board.getCell(0,0).isEmpty()) 
-                return { state: "WIN", winner: board.getCell(0,0) };
+                return { state: "WIN", winner: board.getCell(0,0).getPlayer() };
             if (board.getCell(2,0).getSymbol() === board.getCell(1,1).getSymbol() && 
                 board.getCell(1,1).getSymbol() === board.getCell(0,2).getSymbol() &&
                 !board.getCell(2,0).isEmpty()) 
-                return { state: "WIN", winner: board.getCell(2,0) };
+                return { state: "WIN", winner: board.getCell(2,0).getPlayer() };
 
             // check tie (all spaces filled but no winner)
             if (board.getBoard()
@@ -140,14 +140,14 @@ const displayController = (function DisplayController() {
     
     const boardElem = document.querySelector(".board");
     const turnElem = document.querySelector(".turn");
+    const messageElem = document.querySelector(".message");
 
-    const updateDisplay = () => {
+    const updateDisplay = (gameState) => {
         boardElem.textContent = "";
+        messageElem.textContent = "";
 
         const board = gameController.getBoard();
         const curPlayer = gameController.getCurPlayer();
-
-        turnElem.textContent = `${curPlayer.getName()}'s turn`;
 
         for (const [nrow, row] of Object.entries(board)) {
             for (const [ncol, cell] of Object.entries(row)) {
@@ -159,14 +159,26 @@ const displayController = (function DisplayController() {
                 boardElem.appendChild(cellBtn);
             }
         }
+
+        if (gameState !== undefined && gameState.state !== "CONTINUE") {
+            if (gameState.winner !== undefined) {
+                turnElem.textContent = `${gameState.winner.getName()} won!`
+            } else if (gameState.state === "TIE") {
+                turnElem.textContent = "It's a tie!";
+            } else {
+                messageElem.textContent = "That spot is taken, please try again";
+            }
+        } else {
+            turnElem.textContent = `${curPlayer.getName()}'s turn`;
+        }
     }
 
     boardElem.addEventListener('click', event => {
         selectedRow = event.target.dataset.row;
         selectedCol = event.target.dataset.col;
 
-        gameController.playRound(selectedRow, selectedCol);
-        updateDisplay();
+        let gameState = gameController.playRound(selectedRow, selectedCol);
+        updateDisplay(gameState);
     })
 
     updateDisplay();
