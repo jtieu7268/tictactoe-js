@@ -1,7 +1,24 @@
 const displayController = (function DisplayController() {
-
+    
+    const DIM = 3;
     let p1Name = "Player 1";
     let p2Name = "Player 2";
+
+    const initializeDisplay = () => {
+        const turnElem = document.querySelector(".turn");
+        turnElem.textContent = "Tic-Tac-Toe";
+
+        const boardElem = document.querySelector(".board");
+        for (let i = 0; i < DIM; i++) {
+            for (let j = 0; j < DIM; j++) {
+                const placeholder = document.createElement("div");
+                placeholder.classList.add("cell");
+                boardElem.appendChild(placeholder);
+            }
+        }
+    }
+
+    initializeDisplay();
 
     const startBtn = document.querySelector(".start");
     const namesDialog = document.querySelector("dialog");
@@ -36,7 +53,6 @@ const displayController = (function DisplayController() {
             playerTwoSymbol = 'O'
         ) {
             const board = (function Board() {
-                const DIM = 3;
                 const board = [];
             
                 for (let i = 0; i < DIM; i++) {
