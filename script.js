@@ -6,6 +6,8 @@ const displayController = (function DisplayController() {
     const startBtn = document.querySelector(".start");
     const namesDialog = document.querySelector("dialog");
     const formElem = document.querySelector("form");
+    formElem.querySelector("#p1name").value = p1Name;
+    formElem.querySelector("#p2name").value = p2Name;
     startBtn.addEventListener('click', () => {
         namesDialog.showModal();
     })
