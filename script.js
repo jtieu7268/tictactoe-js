@@ -219,6 +219,8 @@ const displayController = (function DisplayController() {
             selectedRow = event.target.dataset.row;
             selectedCol = event.target.dataset.col;
 
+            if (!selectedRow || !selectedCol) return;
+
             let gameState = gameController.playRound(selectedRow, selectedCol);
             updateGameDisplay(gameState);
         })
