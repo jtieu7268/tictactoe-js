@@ -1,3 +1,9 @@
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    color: teal;
+    background-color: lightseagreen;
+}
+
 .container {
     display: flex;
     flex-direction: column;
@@ -8,14 +14,20 @@
 
 .board {
     display: grid;
-    width: 500px;
-    height: 500px;
+    height: 75vh;
+    aspect-ratio: 1 / 1;
     grid-template-columns: repeat(3, 1fr);
     grid-template-rows: repeat(3, 1fr);
+    grid-gap: 5px;
+    background-color: teal;
 }
 
 .cell {
     display: flex;
     justify-content: center;
     align-items: center;
+    font-size: 3em;
+    color: inherit;
+    background-color: lightseagreen;
+    border: 0;
 }
