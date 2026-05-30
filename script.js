@@ -44,6 +44,8 @@ const displayController = (function DisplayController() {
         });
         namesDialog.addEventListener('close', () => {
             startBtn.textContent = "RESTART";
+            const boardElem = document.querySelector(".board");
+            boardElem.replaceWith(boardElem.cloneNode(true));
             playGame();
         });
     };
@@ -174,7 +176,7 @@ const displayController = (function DisplayController() {
                 )
                     return { state: "TIE" };
 
-                return { state: "CONTINUE"};
+                return { state: "CONTINUE" };
             }
 
             return { getCurPlayer, playRound, getBoard: board.getBoard }
